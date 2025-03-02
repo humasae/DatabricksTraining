@@ -73,3 +73,53 @@ print(endpoints.keys())
 print(endpoints.values())
 
 
+
+# COMMAND ----------
+
+display(dataframes['people'])
+
+# COMMAND ----------
+
+# loops
+
+print (dataframes.keys())
+# display (dataframes['people'])
+print (len(dataframes['people']))
+
+print (type(dataframes['people']))
+print (type(dataframes['people'].iloc[0]))
+print (dataframes['people'].iloc[0].to_dict().keys())
+
+
+# COMMAND ----------
+
+i = 0
+max_people = len(dataframes['people'])
+luke_height = 0
+
+while i < 10:
+    row = dataframes['people'].iloc[i]
+    if (row['name'] == 'Luke Skywalker'):
+        luke_height = row['height']
+    print(f"The character {row['name']} is {row['height']} cm tall and weighs {row['mass']} kg")
+    i=i+1
+
+# COMMAND ----------
+
+def safe_cast_string_to_int(str_to_cast):
+    try:
+        if str_to_cast is None:
+            raise ValueError(f"Variable cannot be cast into integer")
+        return int(str_to_cast)
+    except (ValueError, TypeError) as e:
+        print (f"----------- Custom Error: {e}")
+        return None
+
+def print_taller_characters(row, base_height):
+    height = safe_cast_string_to_int(row['height'])
+    if ( height is not None and height > int (base_height)):
+        print(f"{row['name']} is taller than Luke. He is: {row['height']} cm tall")
+
+
+for row in dataframes['people'].iloc:
+    print_taller_characters(row, luke_height)
