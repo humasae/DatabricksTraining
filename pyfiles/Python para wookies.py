@@ -1,6 +1,7 @@
 # Databricks notebook source
 # MAGIC %md
 # MAGIC <h2> Tutorial based on the book: Pyhton para Todos, Raúl González Duque </h2>
+# MAGIC http://mundogeek.net/tutorial-python/
 
 # COMMAND ----------
 
@@ -123,3 +124,53 @@ def print_taller_characters(row, base_height):
 
 for row in dataframes['people'].iloc:
     print_taller_characters(row, luke_height)
+
+# COMMAND ----------
+
+print(type(dataframes['people']))
+
+df_spark = spark.createDataFrame(dataframes['people'])
+
+df_spark.write.saveAsTable("mi_tabla_sql")
+
+df_resultado = spark.sql("SELECT * FROM mi_tabla_sql")
+display(df_resultado)
+
+# COMMAND ----------
+
+# List Comprehension
+def return_taller_characters(row, base_height):
+    height = safe_cast_string_to_int(row[1])
+    if ( height is not None and height > int (base_height)):
+        return True
+    return False
+
+people_list = dataframes['people'].values.tolist()
+print(type(people_list))
+
+tall_people_list = [p for p in people_list if return_taller_characters(p, 180)]
+display(tall_people_list)
+
+# COMMAND ----------
+
+# Generators I
+tall_people_generator = (p for p in people_list if return_taller_characters(p, 180))
+
+print(type(tall_people_generator))
+print(next(tall_people_generator))
+
+print('---------------------')
+for n in tall_people_generator:
+    print (n)
+
+# COMMAND ----------
+
+# Generators II
+def tall_people_generator_bis(people_list, base_height):
+    for row in people_list:
+        if return_taller_characters(row, base_height):  # Si cumple con la condición
+            yield row  # Devuelve la persona que cumple la condición
+        
+tall_people_generator_bis_impl = tall_people_generator_bis(people_list, 180)
+
+print(next(tall_people_generator_bis_impl))
